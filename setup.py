@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name=PROJECT_NAME,
-    description='a lib for describing Actions and how they should be performed',
+    description='a chill tool for dealing with Snowflake',
     long_description=Path(__file__).absolute().parent.joinpath('README.md').read_text(),
     long_description_content_type='text/markdown',
     setup_requires=[
