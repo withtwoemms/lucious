@@ -1,22 +1,16 @@
 import nox
 import re
 
-from distutils.util import strtobool
-from os import environ as envvar
 from subprocess import check_output
-from subprocess import Popen
-from subprocess import PIPE
 from typing import List
 
+from buildvars import COVERAGE
+from buildvars import OFFICIAL
+from buildvars import VENV
+from buildvars import TESTDIR
+from buildvars import TESTNAME
+from buildvars import USEVENV
 
-COVERAGE = bool(strtobool(envvar.get('COVERAGE', 'True')))
-OFFICIAL = bool(strtobool(envvar.get('OFFICIAL', 'False')))
-PROJECT_NAME = 'lucious'
-VENV = f'{PROJECT_NAME}-venv'
-TESTDIR = f'tests.{PROJECT_NAME}'
-TESTNAME = envvar.get('TESTNAME', '')
-USEVENV = envvar.get('USEVENV', False)
-EXAMPLE = envvar.get('EXAMPLE', PROJECT_NAME)
 
 external = False if USEVENV else True
 supported_python_versions = [

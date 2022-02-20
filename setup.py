@@ -1,4 +1,4 @@
-from noxfile import PROJECT_NAME
+from buildvars import PROJECT_NAME
 from os import environ as envvars
 from pathlib import Path
 from setuptools import setup, find_packages
