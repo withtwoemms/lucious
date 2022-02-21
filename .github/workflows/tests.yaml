@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   check:
-    runs-on: ubuntu-latest=nektos/act-environments-ubuntu:18.04
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
