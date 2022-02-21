@@ -1,16 +1,20 @@
 import nox
 import re
 
+from distutils.util import strtobool
+from os import environ as envvars
 from subprocess import check_output
 from typing import List
 
-from buildvars import COVERAGE
-from buildvars import OFFICIAL
-from buildvars import VENV
-from buildvars import TESTDIR
-from buildvars import TESTNAME
-from buildvars import USEVENV
 
+PROJECT_NAME = 'lucious'
+
+COVERAGE = bool(strtobool(envvars.get('COVERAGE', 'True')))
+OFFICIAL = bool(strtobool(envvars.get('OFFICIAL', 'False')))
+VENV = f'{PROJECT_NAME}-venv'
+TESTDIR = f'tests.{PROJECT_NAME}'
+TESTNAME = envvars.get('TESTNAME', '')
+USEVENV = envvars.get('USEVENV', False)
 
 external = False if USEVENV else True
 supported_python_versions = [
