@@ -1,9 +1,12 @@
+from typing import Union
+
 from actionpack.actions import Call
 from actionpack.actions import Pipeline
 from actionpack.actions import Write
 from actionpack.utils import Closure
 from snowflake.connector.cursor import SnowflakeCursor
 
+from lucious.types import QualifiedTableName
 from lucious.types import SnowflakeColumn
 from lucious.types import SnowflakeTable
 from lucious.utils import render_columns
@@ -19,8 +22,18 @@ def fetch_tables(curs: SnowflakeCursor, database: str, schema: str, ignore_hidde
         yield table
 
 
-def fetch_columns(curs: SnowflakeCursor, table: SnowflakeTable, ignore_hidden: bool = False):
-    query = f'show columns in {table.qualified_name()};'
+def fetch_columns(
+    curs: SnowflakeCursor,
+    table: Union[SnowflakeTable, QualifiedTableName],
+    ignore_hidden: bool = False
+):
+    if isinstance(table, SnowflakeTable):
+        query = f'show columns in {table.qualified_name()};'
+    elif isinstance(table, QualifiedTableName):
+        query = f'show columns in {table};'
+    else:
+        raise TypeError('Table must be a SnowflakeTable or QualifiedTableName')
+
     for answer in fetch_answers(curs, query):
         column = SnowflakeColumn(*answer)
         if ignore_hidden and column.name.startswith('_'):
@@ -35,10 +48,17 @@ def fetch_answers(curs: SnowflakeCursor, query: str):
 
 def fetch_columns_then_write(
     curs: SnowflakeCursor,
-    table: SnowflakeTable,
+    table: Union[SnowflakeTable, QualifiedTableName],
     outfilename: str,
     ignore_hidden_columns: bool = False
 ) -> Pipeline:
+    if isinstance(table, SnowflakeTable):
+        qualified_table_name = QualifiedTableName.of(table.qualified_name())
+    elif isinstance(table, QualifiedTableName):
+        qualified_table_name = table
+    else:
+        raise TypeError('Table must be a SnowflakeTable or QualifiedTableName')
+
     call = Call(Closure(fetch_columns, curs, table, ignore_hidden_columns))
     format_answer = Pipeline.Fitting(
         action=Call,
@@ -53,4 +73,4 @@ def fetch_columns_then_write(
             'to_write': Pipeline.Receiver
         },
     )
-    return Pipeline(call, format_answer, write).set(name=table.qualified_name())
+    return Pipeline(call, format_answer, write).set(name=qualified_table_name)
