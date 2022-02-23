@@ -24,6 +24,9 @@ jobs:
       - name: Provision virtual environment and run tests
         run: nox -s install test
 
+      - name: Upload coverage
+        run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+
       - name: Archive coverage report
         uses: actions/upload-artifact@v2
         with:
