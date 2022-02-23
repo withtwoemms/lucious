@@ -90,7 +90,8 @@ def test(session):
     if COVERAGE:
         session.run(
             'python', '-m',
-            'coverage', 'run', '--source', f'{TESTDIR}', '--branch',
+            'coverage', 'run', '--source', '.', '--branch',
+            '--omit', '**/__*__.py,tests/*,noxfile.py,setup.py',
             '-m', 'unittest', TESTNAME if TESTNAME else f'discover',
             external=external
         )
