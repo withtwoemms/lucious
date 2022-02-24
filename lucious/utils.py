@@ -21,7 +21,6 @@ projectroot = Path(__file__).parent.parent.resolve()
 def class_properties(cls: type, include_hidden: bool = False):
     properties = inspect.getmembers(cls, lambda attribute: not(inspect.isroutine(attribute)))
     for property in properties:
-        # print(property[0].startswith('_'))
         if not include_hidden and property[0].startswith('_'):
             pass
         else:
