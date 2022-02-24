@@ -21,7 +21,7 @@ class SnowflakeTable:
     is_external: str
 
     def qualified_name(self):
-        return f'{self.database_name}.{self.schema_name}.{self.name}'
+        return QualifiedTableName(self.database_name, self.schema_name, self.name)
 
 
 @dataclass(frozen=True)
