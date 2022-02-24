@@ -69,6 +69,6 @@ class UtilsTest(TestCase):
     )
     @patch('snowflake.connector.connection.SnowflakeConnection.connect')
     @patch('snowflake.connector.connection.SnowflakeConnection.rest', new_callable=PropertyMock)
-    def test_SnowflakeCursor(self, mock_property, mock_connect):
+    def test_snowflake_cursor(self, mock_property, mock_connect):
         result = snowflake_cursor(database='database', schema='schema')
         self.assertIsInstance(result, SnowflakeCursor)
