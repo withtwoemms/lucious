@@ -1,3 +1,5 @@
+from typing import Iterable
+from typing import Iterator
 from unittest import TestCase
 
 from lucious.types import QualifiedTableName
@@ -28,3 +30,9 @@ class QualifiedTableNameTest(TestCase):
         expected_qualified_schema = f'{self.expected_database.upper()}.{self.expected_schema.upper()}'
         self.assertIsInstance(result, QualifiedTableName)
         self.assertEqual(result.qualified_schema(), expected_qualified_schema)
+
+    def test_can_render_as_iterable(self):
+        result = self.QualifiedTableName
+        self.assertIsInstance(iter(result), Iterator)
+        self.assertIsInstance(list(result), Iterable)
+
