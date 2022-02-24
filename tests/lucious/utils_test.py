@@ -10,6 +10,7 @@ from lucious.utils import class_properties
 from lucious.utils import gather
 from lucious.utils import pad
 from lucious.utils import snowflake_cursor
+from lucious.utils import snowflake_exec
 
 
 class UtilsTest(TestCase):
@@ -72,3 +73,17 @@ class UtilsTest(TestCase):
     def test_snowflake_cursor(self, mock_property, mock_connect):
         result = snowflake_cursor(database='database', schema='schema')
         self.assertIsInstance(result, SnowflakeCursor)
+
+    @patch('snowflake.connector.cursor.SnowflakeCursor', autospec=True)
+    def test_snowflake_exec(self, mock_cursor):
+        error = RuntimeError(f'query failed.')
+        def fail_query(query):
+            raise error
+        mock_cursor.execute.side_effect = fail_query
+
+        query = 'SELECT this_column FROM that_table;'
+        result = snowflake_exec(curs=mock_cursor, query=query, error_msg=str(error))
+        self.assertIsNone(result)
+
+        with self.assertRaises(type(error)) as ctx:
+            snowflake_exec(curs=mock_cursor, query=query)
