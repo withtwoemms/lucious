@@ -7,6 +7,7 @@ from unittest.mock import patch
 from snowflake.connector.cursor import SnowflakeCursor
 
 from lucious.utils import class_properties
+from lucious.utils import gather
 from lucious.utils import pad
 from lucious.utils import snowflake_cursor
 
@@ -37,6 +38,23 @@ class UtilsTest(TestCase):
         self.assertIsInstance(result, Iterator)
         self.assertEqual(list(result), list(iter(contents)) + extension)
 
+    def test_gather(self):
+        option = '--option'
+        first_value = 'a'
+        second_value = 'b'
+        third_value = 'c'
+
+        arguments = (option, first_value, second_value, third_value)
+
+        zeroth_result = gather(option, arguments, nargs=0)
+        first_result = gather(option, arguments, nargs=1)
+        second_result = gather(option, arguments, nargs=2)
+        third_result = gather(option, arguments, nargs=3)
+
+        self.assertEqual(zeroth_result, [option])
+        self.assertEqual(first_result, [option, first_value])
+        self.assertEqual(second_result, [option, first_value, second_value])
+        self.assertEqual(third_result, [option, first_value, second_value, third_value])
 
     @patch.dict(
         envvars,
