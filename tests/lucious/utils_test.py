@@ -1,4 +1,5 @@
 from os import environ as envvars
+from typing import Iterator
 from unittest import TestCase
 from unittest.mock import PropertyMock
 from unittest.mock import patch
@@ -6,6 +7,7 @@ from unittest.mock import patch
 from snowflake.connector.cursor import SnowflakeCursor
 
 from lucious.utils import class_properties
+from lucious.utils import pad
 from lucious.utils import snowflake_cursor
 
 
@@ -21,6 +23,20 @@ class UtilsTest(TestCase):
             dict(result),
             {'a': 'a', 'b': 'b'}
         )
+
+    def test_pad(self):
+        contents, pad_amount, padding = 'abc', 2, ''
+        extension = [padding for _ in range(pad_amount)]
+
+        iterable = list(contents)
+        result = pad(iterable, pad_amount, padding)
+        self.assertEqual(result, iterable + extension)
+
+        iterator = iter(contents)
+        result = pad(iterator, pad_amount, padding)
+        self.assertIsInstance(result, Iterator)
+        self.assertEqual(list(result), list(iter(contents)) + extension)
+
 
     @patch.dict(
         envvars,
